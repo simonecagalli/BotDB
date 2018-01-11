@@ -308,8 +308,9 @@ telegram.on("inline_query", (query) => {
         if (err)
             throw err;
         var aa = JSON.stringify(result);
-        bb=aa.substr(15);
-        cc=bb.substring(0, bb.length - 3);
+        var bb=aa.substr(15);
+        var cc=bb.substring(0, bb.length - 3);
+        var dd=cc.replace(/\n/g,"/r/n")
         telegram.answerInlineQuery(query.id, [
             {
 
@@ -317,7 +318,7 @@ telegram.on("inline_query", (query) => {
                 id: "testarticle",
                 title: "#cerco:...",
                 input_message_content: {
-                    message_text: "#cerco:\n"+cc
+                    message_text: "#cerco:\n"+dd
                 }
             }
         ]);
