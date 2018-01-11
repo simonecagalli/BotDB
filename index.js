@@ -8,10 +8,10 @@ var TelegramBot = require('node-telegram-bot-api'),
         });
 
 var con = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "admin",
-    database: "mydb"
+    host: "eu-cdbr-west-01.cleardb.com",
+    user: "b30bac3a8b6eaa",
+    password: "13ff7d6f",
+    database: "heroku_8eeec60b9a5a4e8"
 });
 con.connect(function (err) {
     if (err)
@@ -32,6 +32,13 @@ function dataBase(myq) {
 }
 ;
 
+telegram.on("text", (message) => {
+
+    if (message.text.toLowerCase().match("/start")) {
+
+        telegram.sendMessage(message.chat.id, "Benvenuto! Per cominciare usa i comandi.");
+    }
+});
 
 telegram.on("text", (message) => {
 
@@ -255,17 +262,18 @@ telegram.on("text", (message) => {
                 } else if (isNumeric(arg1) && bb === "\"trovato\"}]" || !isNumeric(arg1) && aa === "\"trovato\"}]") {
                     telegram.sendMessage(message.chat.id, "È già presente nella lista!");
                 } else if (!isNumeric(arg1) && aa === "\"non trovato\"}]") {
-        con.query("INSERT INTO mydb.oggetti (nome,quantita) VALUES ('"+arg1+"',1);", function (err, result) {
-            if (err)
-                throw err;
-                    telegram.sendMessage(message.chat.id, "Aggiunto '" + arg1 + "' x1 alla lista!");
-        });} else if (isNumeric(arg1) && bb === "\"non trovato\"}]") {
+                    con.query("INSERT INTO mydb.oggetti (nome,quantita) VALUES ('" + arg1 + "',1);", function (err, result) {
+                        if (err)
+                            throw err;
+                        telegram.sendMessage(message.chat.id, "Aggiunto '" + arg1 + "' x1 alla lista!");
+                    });
+                } else if (isNumeric(arg1) && bb === "\"non trovato\"}]") {
                     if (arg1 > 0) {
-                        con.query("INSERT INTO mydb.oggetti (nome,quantita) VALUES ('"+arg2+"',"+arg1+");", function (err, result) {
-            if (err)
-                throw err;
-                    telegram.sendMessage(message.chat.id, "Aggiunto '" + arg2 + "' x" + arg1 + " alla lista!");
-        });
+                        con.query("INSERT INTO mydb.oggetti (nome,quantita) VALUES ('" + arg2 + "'," + arg1 + ");", function (err, result) {
+                            if (err)
+                                throw err;
+                            telegram.sendMessage(message.chat.id, "Aggiunto '" + arg2 + "' x" + arg1 + " alla lista!");
+                        });
                     } else {
                         telegram.sendMessage(message.chat.id, "Deve essere un numero positivo, piccolo birbantello.");
                     }
@@ -273,4 +281,45 @@ telegram.on("text", (message) => {
             });
         });
     }
+});
+
+telegram.on("text", (message) => {
+
+    if (message.text.toLowerCase().indexOf("/avviso") === 0) {
+        var st = message.text.substr(8);
+        st = st.replace(/'/g, "''");
+        con.query("update mydb.inline set messaggio='" + st + "' where colonnainutile=1", function (err, result) {
+            if (err)
+                throw err;      
+                telegram.sendMessage(message.chat.id, "Messaggio fissato.");
+                con.query("select messaggio from mydb.inline where colonnainutile=1", function (err, result2) {
+            if (err)
+                throw err;      
+            result2=JSON.stringify(result2);
+                telegram.sendMessage(message.chat.id, result2);});
+
+            });
+    }
+    ;
+});
+
+telegram.on("inline_query", (query) => {
+    con.query("select messaggio from mydb.inline where colonnainutile=1", function (err, result) {
+        if (err)
+            throw err;
+        var aa = JSON.stringify(result);
+        bb=aa.substr(15);
+        cc=bb.substring(0, bb.length - 3);
+        telegram.answerInlineQuery(query.id, [
+            {
+
+                type: "article",
+                id: "testarticle",
+                title: "#cerco:...",
+                input_message_content: {
+                    message_text: "#cerco:\n"+cc
+                }
+            }
+        ]);
+    });
 });
