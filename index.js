@@ -45,13 +45,13 @@ telegram.on("text", (message) => {
     if (message.text.toLowerCase().indexOf("/show") === 0) {
         var lol = message.text.split(" ");
         var arg1 = lol[1];
-        con.query("select if(count(*)=0 ,'non trovato','trovato') from mydb.oggetti where nome regexp '" + arg1 + "'", function (err, result) {
+        con.query("select if(count(*)=0 ,'non trovato','trovato') from heroku_8eeec60b9a5a4e8.oggetti where nome regexp '" + arg1 + "'", function (err, result) {
             if (err)
                 throw err;
             var sc = JSON.stringify(result);
             var sc = sc.replace("\[{\"if(count(*)=0 ,'non trovato','trovato')\":", "");
             if (arg1 === undefined) {
-                con.query("SELECT * FROM oggetti", function (err, result) {
+                con.query("SELECT * FROM heroku_8eeec60b9a5a4e8.oggetti", function (err, result) {
                     if (err)
                         throw err;
                     var tre = JSON.stringify(result);
@@ -64,7 +64,7 @@ telegram.on("text", (message) => {
                     telegram.sendMessage(message.chat.id, lol3);
                 });
             } else if (sc === "\"trovato\"}]") {
-                con.query("select nome from mydb.oggetti where nome regexp '" + arg1 + "'", function (err, result) {
+                con.query("select nome from heroku_8eeec60b9a5a4e8.oggetti where nome regexp '" + arg1 + "'", function (err, result) {
                     if (err)
                         throw err;
                     var dc = JSON.stringify(result);
@@ -72,7 +72,7 @@ telegram.on("text", (message) => {
                     var dc = dc.replace(/{"nome":"/g, "- ");
                     var dc = dc.replace(/}|{|"/g, "");
                     var dc = dc.substring(0, dc.length - 1);
-                    con.query("select quantita from mydb.oggetti where nome regexp '" + arg1 + "'", function (err, result2) {
+                    con.query("select quantita from heroku_8eeec60b9a5a4e8.oggetti where nome regexp '" + arg1 + "'", function (err, result2) {
                         if (err)
                             throw err;
                         var dc2 = JSON.stringify(result2);
@@ -101,12 +101,12 @@ telegram.on("text", (message) => {
         var lol = message.text.split(" ");
         var arg1 = lol[1];
         var arg2 = lol[2];
-        con.query("select if(count(*)=0 ,'non trovato','trovato') from mydb.oggetti where nome regexp '" + arg2 + "'", function (err, result) {
+        con.query("select if(count(*)=0 ,'non trovato','trovato') from heroku_8eeec60b9a5a4e8.oggetti where nome regexp '" + arg2 + "'", function (err, result) {
             if (err)
                 throw err;
             var aa = JSON.stringify(result);
             var aa = aa.replace("\[{\"if(count(*)=0 ,'non trovato','trovato')\":", "");
-            con.query("select if(count(*)=0 ,'non trovato','trovato') from mydb.oggetti where nome regexp '" + arg1 + "'", function (err, result) {
+            con.query("select if(count(*)=0 ,'non trovato','trovato') from heroku_8eeec60b9a5a4e8.oggetti where nome regexp '" + arg1 + "'", function (err, result) {
                 if (err)
                     throw err;
                 var bb = JSON.stringify(result);
@@ -115,7 +115,7 @@ telegram.on("text", (message) => {
                     telegram.sendMessage(message.chat.id, "Ma togliere cosa?\n/sub [n] <oggetto>");
                 } else if (isNumeric(arg1) && aa === "\"trovato\"}]") {
                     if (arg1 > 0) {
-                        con.query("select quantita from mydb.oggetti where nome regexp '" + arg2 + "'", function (err, result) {
+                        con.query("select quantita from heroku_8eeec60b9a5a4e8.oggetti where nome regexp '" + arg2 + "'", function (err, result) {
                             if (err)
                                 throw err;
                             var aa = JSON.stringify(result);
@@ -127,15 +127,15 @@ telegram.on("text", (message) => {
                                 var aa = aa.replace("[{\"quantita\":", "");
                                 var aa = parseInt(aa);
                                 var aa = aa - arg1;
-                                con.query("update mydb.oggetti set quantita=" + aa + " where nome regexp '" + arg2 + "'", function (err, result) {
+                                con.query("update heroku_8eeec60b9a5a4e8.oggetti set quantita=" + aa + " where nome regexp '" + arg2 + "'", function (err, result) {
                                     if (err)
                                         throw err;
                                     telegram.sendMessage(message.chat.id, "Ora ne cerchi solo " + aa + ".");
                                     if (aa <= 0) {
-                                        con.query("delete from mydb.oggetti where oggetti.nome like '" + arg2 + "'", function (err, result) {
+                                        con.query("delete from heroku_8eeec60b9a5a4e8.oggetti where oggetti.nome like '" + arg2 + "'", function (err, result) {
                                             if (err)
                                                 throw err;
-                                            con.query("select nome from mydb.oggetti where oggetti.nome like '" + arg2 + "'", function (err, result) {
+                                            con.query("select nome from heroku_8eeec60b9a5a4e8.oggetti where oggetti.nome like '" + arg2 + "'", function (err, result) {
                                                 if (err)
                                                     throw err;
                                                 var dc = JSON.stringify(result);
@@ -158,7 +158,7 @@ telegram.on("text", (message) => {
                 } else if (isNumeric(arg1) && aa === "\"non trovato\"}]" || !isNumeric(arg1) && bb === "\"non trovato\"}]") {
                     telegram.sendMessage(message.chat.id, "L'oggetto non è nella lista.");
                 } else if (!isNumeric(arg1) && bb === "\"trovato\"}]") {
-                    con.query("select quantita from mydb.oggetti where nome regexp '" + arg1 + "'", function (err, result) {
+                    con.query("select quantita from heroku_8eeec60b9a5a4e8.oggetti where nome regexp '" + arg1 + "'", function (err, result) {
                         if (err)
                             throw err;
                         var aa = JSON.stringify(result);
@@ -170,15 +170,15 @@ telegram.on("text", (message) => {
                             var aa = aa.replace("[{\"quantita\":", "");
                             var aa = parseInt(aa);
                             var aa = aa - 1;
-                            con.query("update mydb.oggetti set quantita=" + aa + " where nome regexp '" + arg1 + "'", function (err, result) {
+                            con.query("update heroku_8eeec60b9a5a4e8.oggetti set quantita=" + aa + " where nome regexp '" + arg1 + "'", function (err, result) {
                                 if (err)
                                     throw err;
                                 telegram.sendMessage(message.chat.id, "Ora ne cerchi solo " + aa + ".");
                                 if (aa <= 0) {
-                                    con.query("delete from mydb.oggetti where oggetti.nome like '" + arg1 + "'", function (err, result) {
+                                    con.query("delete from heroku_8eeec60b9a5a4e8.oggetti where oggetti.nome like '" + arg1 + "'", function (err, result) {
                                         if (err)
                                             throw err;
-                                        con.query("select nome from mydb.oggetti where oggetti.nome like '" + arg1 + "'", function (err, result) {
+                                        con.query("select nome from heroku_8eeec60b9a5a4e8.oggetti where oggetti.nome like '" + arg1 + "'", function (err, result) {
                                             if (err)
                                                 throw err;
                                             var dc = JSON.stringify(result);
@@ -218,7 +218,7 @@ telegram.on("text", (message) => {
     if (message.text.toLowerCase().indexOf("/del") === 0) {
         var lol = message.text.split(" ");
         var arg1 = lol[1];
-        con.query("select if(count(*)=0 ,'non trovato','trovato') from mydb.oggetti where nome = '" + arg1 + "'", function (err, result) {
+        con.query("select if(count(*)=0 ,'non trovato','trovato') from heroku_8eeec60b9a5a4e8.oggetti where nome = '" + arg1 + "'", function (err, result) {
             if (err)
                 throw err;
             var aa = JSON.stringify(result);
@@ -226,7 +226,7 @@ telegram.on("text", (message) => {
             if (arg1 === undefined) {
                 telegram.sendMessage(message.chat.id, "Cosa vuoi eliminare?\n/del <oggetto>");
             } else if (aa === "\"trovato\"}]") {
-                con.query("delete from mydb.oggetti where oggetti.nome like '" + arg1 + "'", function (err, result) {
+                con.query("delete from heroku_8eeec60b9a5a4e8.oggetti where oggetti.nome like '" + arg1 + "'", function (err, result) {
                     if (err)
                         throw err;
                     telegram.sendMessage(message.chat.id, "'" + arg1 + "' eliminato dalla lista.");
@@ -247,12 +247,12 @@ telegram.on("text", (message) => {
         var lol = message.text.split(" ");
         var arg1 = lol[1];
         var arg2 = lol[2];
-        con.query("select if(count(*)=0 ,'non trovato','trovato') from mydb.oggetti where nome = '" + arg1 + "'", function (err, result) {
+        con.query("select if(count(*)=0 ,'non trovato','trovato') from heroku_8eeec60b9a5a4e8.oggetti where nome = '" + arg1 + "'", function (err, result) {
             if (err)
                 throw err;
             var aa = JSON.stringify(result);
             var aa = aa.replace("\[{\"if(count(*)=0 ,'non trovato','trovato')\":", "");
-            con.query("select if(count(*)=0 ,'non trovato','trovato') from mydb.oggetti where nome = '" + arg2 + "'", function (err, result) {
+            con.query("select if(count(*)=0 ,'non trovato','trovato') from heroku_8eeec60b9a5a4e8.oggetti where nome = '" + arg2 + "'", function (err, result) {
                 if (err)
                     throw err;
                 var bb = JSON.stringify(result);
@@ -262,14 +262,14 @@ telegram.on("text", (message) => {
                 } else if (isNumeric(arg1) && bb === "\"trovato\"}]" || !isNumeric(arg1) && aa === "\"trovato\"}]") {
                     telegram.sendMessage(message.chat.id, "È già presente nella lista!");
                 } else if (!isNumeric(arg1) && aa === "\"non trovato\"}]") {
-                    con.query("INSERT INTO mydb.oggetti (nome,quantita) VALUES ('" + arg1 + "',1);", function (err, result) {
+                    con.query("INSERT INTO heroku_8eeec60b9a5a4e8.oggetti (nome,quantita) VALUES ('" + arg1 + "',1);", function (err, result) {
                         if (err)
                             throw err;
                         telegram.sendMessage(message.chat.id, "Aggiunto '" + arg1 + "' x1 alla lista!");
                     });
                 } else if (isNumeric(arg1) && bb === "\"non trovato\"}]") {
                     if (arg1 > 0) {
-                        con.query("INSERT INTO mydb.oggetti (nome,quantita) VALUES ('" + arg2 + "'," + arg1 + ");", function (err, result) {
+                        con.query("INSERT INTO heroku_8eeec60b9a5a4e8.oggetti (nome,quantita) VALUES ('" + arg2 + "'," + arg1 + ");", function (err, result) {
                             if (err)
                                 throw err;
                             telegram.sendMessage(message.chat.id, "Aggiunto '" + arg2 + "' x" + arg1 + " alla lista!");
@@ -288,11 +288,11 @@ telegram.on("text", (message) => {
     if (message.text.toLowerCase().indexOf("/avviso") === 0) {
         var st = message.text.substr(8);
         st = st.replace(/'/g, "''");
-        con.query("update mydb.inline set messaggio='" + st + "' where colonnainutile=1", function (err, result) {
+        con.query("update heroku_8eeec60b9a5a4e8.inline set messaggio='" + st + "' where colonnainutile=1", function (err, result) {
             if (err)
                 throw err;      
                 telegram.sendMessage(message.chat.id, "Messaggio fissato.");
-                con.query("select messaggio from mydb.inline where colonnainutile=1", function (err, result2) {
+                con.query("select messaggio from heroku_8eeec60b9a5a4e8.inline where colonnainutile=1", function (err, result2) {
             if (err)
                 throw err;      
             result2=JSON.stringify(result2);
@@ -304,7 +304,7 @@ telegram.on("text", (message) => {
 });
 
 telegram.on("inline_query", (query) => {
-    con.query("select messaggio from mydb.inline where colonnainutile=1", function (err, result) {
+    con.query("select messaggio from heroku_8eeec60b9a5a4e8.inline where colonnainutile=1", function (err, result) {
         if (err)
             throw err;
         var aa = JSON.stringify(result);
