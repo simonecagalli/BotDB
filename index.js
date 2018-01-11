@@ -100,57 +100,57 @@ telegram.on("text", (message) => {
             var aa = JSON.stringify(result);
             var aa = aa.replace("\[{\"if(count(*)=0 ,'non trovato','trovato')\":", "");
             con.query("select if(count(*)=0 ,'non trovato','trovato') from mydb.oggetti where nome regexp '" + arg1 + "'", function (err, result) {
-            if (err)
-                throw err;
-            var bb = JSON.stringify(result);
-            var bb = bb.replace("\[{\"if(count(*)=0 ,'non trovato','trovato')\":", "");
-            if (arg1 === undefined) {
-                telegram.sendMessage(message.chat.id, "Ma togliere cosa?\n/sub [n] <oggetto>");
-            } else if (isNumeric(arg1) && aa === "\"trovato\"}]") {
-                if (arg1 > 0) {
-                    con.query("select quantita from mydb.oggetti where nome regexp '" + arg2 + "'", function (err, result) {
-                        if (err)
-                            throw err;
-                        var aa = JSON.stringify(result);
-                        cc = aa.split(",");
-                        if (cc.length > 1) {
-                            telegram.sendMessage(message.chat.id, cc.length + " risultati trovati! Sii più specifico :P");
-                        } else {
-                            var aa = aa.substring(0, aa.length - 2);
-                            var aa = aa.replace("[{\"quantita\":", "");
-                            var aa = parseInt(aa);
-                            var aa = aa - arg1;
-                            con.query("update mydb.oggetti set quantita=" + aa + " where nome regexp '" + arg2 + "'", function (err, result) {
-                                if (err)
-                                    throw err;
-                                telegram.sendMessage(message.chat.id, "Ora ne cerchi solo " + aa + ".");
-                                if (aa <= 0) {
-                                    con.query("delete from mydb.oggetti where oggetti.nome like '" + arg2 + "'", function (err, result) {
-                                        if (err)
-                                            throw err;
-                                        con.query("select nome from mydb.oggetti where oggetti.nome like '" + arg2 + "'", function (err, result) {
+                if (err)
+                    throw err;
+                var bb = JSON.stringify(result);
+                var bb = bb.replace("\[{\"if(count(*)=0 ,'non trovato','trovato')\":", "");
+                if (arg1 === undefined) {
+                    telegram.sendMessage(message.chat.id, "Ma togliere cosa?\n/sub [n] <oggetto>");
+                } else if (isNumeric(arg1) && aa === "\"trovato\"}]") {
+                    if (arg1 > 0) {
+                        con.query("select quantita from mydb.oggetti where nome regexp '" + arg2 + "'", function (err, result) {
+                            if (err)
+                                throw err;
+                            var aa = JSON.stringify(result);
+                            cc = aa.split(",");
+                            if (cc.length > 1) {
+                                telegram.sendMessage(message.chat.id, cc.length + " risultati trovati! Sii più specifico :P");
+                            } else {
+                                var aa = aa.substring(0, aa.length - 2);
+                                var aa = aa.replace("[{\"quantita\":", "");
+                                var aa = parseInt(aa);
+                                var aa = aa - arg1;
+                                con.query("update mydb.oggetti set quantita=" + aa + " where nome regexp '" + arg2 + "'", function (err, result) {
+                                    if (err)
+                                        throw err;
+                                    telegram.sendMessage(message.chat.id, "Ora ne cerchi solo " + aa + ".");
+                                    if (aa <= 0) {
+                                        con.query("delete from mydb.oggetti where oggetti.nome like '" + arg2 + "'", function (err, result) {
                                             if (err)
                                                 throw err;
-                                            var dc = JSON.stringify(result);
-                                            var dc = dc.replace("[", "\"");
-                                            var dc = dc.replace(/{"nome":"/g, "");
-                                            var dc = dc.replace(/}|{|"/g, "");
-                                            var dc = dc.substring(0, dc.length - 1);
-                                            telegram.sendMessage(message.chat.id, "\"" + arg2 + "\" è stato rimosso dalla lista.");
+                                            con.query("select nome from mydb.oggetti where oggetti.nome like '" + arg2 + "'", function (err, result) {
+                                                if (err)
+                                                    throw err;
+                                                var dc = JSON.stringify(result);
+                                                var dc = dc.replace("[", "\"");
+                                                var dc = dc.replace(/{"nome":"/g, "");
+                                                var dc = dc.replace(/}|{|"/g, "");
+                                                var dc = dc.substring(0, dc.length - 1);
+                                                telegram.sendMessage(message.chat.id, "\"" + arg2 + "\" è stato rimosso dalla lista.");
+                                            });
                                         });
-                                    });
-                                }
-                                ;
-                            });
-                        }
-                        ;
-                    });
-                } else {
-                    telegram.sendMessage(message.chat.id, "Deve essere un numero positivo, piccolo birbantello.");
-                }
-            } else if (isNumeric(arg1) && aa === "\"non trovato\"}]"||!isNumeric(arg1) && bb === "\"non trovato\"}]") {
-                telegram.sendMessage(message.chat.id, "L'oggetto non è nella lista.");
-            }else if (!isNumeric(arg1) && bb === "\"trovato\"}]") {
+                                    }
+                                    ;
+                                });
+                            }
+                            ;
+                        });
+                    } else {
+                        telegram.sendMessage(message.chat.id, "Deve essere un numero positivo, piccolo birbantello.");
+                    }
+                } else if (isNumeric(arg1) && aa === "\"non trovato\"}]" || !isNumeric(arg1) && bb === "\"non trovato\"}]") {
+                    telegram.sendMessage(message.chat.id, "L'oggetto non è nella lista.");
+                } else if (!isNumeric(arg1) && bb === "\"trovato\"}]") {
                     con.query("select quantita from mydb.oggetti where nome regexp '" + arg1 + "'", function (err, result) {
                         if (err)
                             throw err;
@@ -179,7 +179,7 @@ telegram.on("text", (message) => {
                                             var dc = dc.replace(/{"nome":"/g, "");
                                             var dc = dc.replace(/}|{|"/g, "");
                                             var dc = dc.substring(0, dc.length - 1);
-                                            telegram.sendMessage(message.chat.id, "\"" + arg1 + "\" è stato rimosso dalla lista.");
+                                            telegram.sendMessage(message.chat.id, "'" + arg1 + "' è stato rimosso dalla lista.");
                                         });
                                     });
                                 }
@@ -188,12 +188,13 @@ telegram.on("text", (message) => {
                         }
                         ;
                     });
-                
-            }
-            ;
+
+                }
+                ;
+            });
         });
-    });
-}});
+    }
+});
 
 
 
@@ -201,5 +202,75 @@ telegram.on("text", (message) => {
 
     if (message.text.toLowerCase().indexOf("/listino") === 0) {
         telegram.sendPhoto(message.chat.id, "http://imghost.io/images/2017/11/04/a9d28557-df37-479a-a60e-5f01ae5e6b26.jpg");
+    }
+});
+
+
+telegram.on("text", (message) => {
+
+    if (message.text.toLowerCase().indexOf("/del") === 0) {
+        var lol = message.text.split(" ");
+        var arg1 = lol[1];
+        con.query("select if(count(*)=0 ,'non trovato','trovato') from mydb.oggetti where nome = '" + arg1 + "'", function (err, result) {
+            if (err)
+                throw err;
+            var aa = JSON.stringify(result);
+            var aa = aa.replace("\[{\"if(count(*)=0 ,'non trovato','trovato')\":", "");
+            if (arg1 === undefined) {
+                telegram.sendMessage(message.chat.id, "Cosa vuoi eliminare?\n/del <oggetto>");
+            } else if (aa === "\"trovato\"}]") {
+                con.query("delete from mydb.oggetti where oggetti.nome like '" + arg1 + "'", function (err, result) {
+                    if (err)
+                        throw err;
+                    telegram.sendMessage(message.chat.id, "'" + arg1 + "' eliminato dalla lista.");
+                });
+            } else if (aa === "\"non trovato\"}]") {
+                telegram.sendMessage(message.chat.id, "\"" + arg1 + "\" Non trovato!\nUsa /show per vedere gli oggetti presenti nella lista.");
+            }
+
+        });
+    }
+});
+
+
+
+telegram.on("text", (message) => {
+
+    if (message.text.toLowerCase().indexOf("/ins") === 0) {
+        var lol = message.text.split(" ");
+        var arg1 = lol[1];
+        var arg2 = lol[2];
+        con.query("select if(count(*)=0 ,'non trovato','trovato') from mydb.oggetti where nome = '" + arg1 + "'", function (err, result) {
+            if (err)
+                throw err;
+            var aa = JSON.stringify(result);
+            var aa = aa.replace("\[{\"if(count(*)=0 ,'non trovato','trovato')\":", "");
+            con.query("select if(count(*)=0 ,'non trovato','trovato') from mydb.oggetti where nome = '" + arg2 + "'", function (err, result) {
+                if (err)
+                    throw err;
+                var bb = JSON.stringify(result);
+                var bb = bb.replace("\[{\"if(count(*)=0 ,'non trovato','trovato')\":", "");
+                if (arg1 === undefined) {
+                    telegram.sendMessage(message.chat.id, "Cosa vuoi inserire?\n/new [n] <oggetto>");
+                } else if (isNumeric(arg1) && bb === "\"trovato\"}]" || !isNumeric(arg1) && aa === "\"trovato\"}]") {
+                    telegram.sendMessage(message.chat.id, "È già presente nella lista!");
+                } else if (!isNumeric(arg1) && aa === "\"non trovato\"}]") {
+        con.query("INSERT INTO mydb.oggetti (nome,quantita) VALUES ('"+arg1+"',1);", function (err, result) {
+            if (err)
+                throw err;
+                    telegram.sendMessage(message.chat.id, "Aggiunto '" + arg1 + "' x1 alla lista!");
+        });} else if (isNumeric(arg1) && bb === "\"non trovato\"}]") {
+                    if (arg1 > 0) {
+                        con.query("INSERT INTO mydb.oggetti (nome,quantita) VALUES ('"+arg2+"',"+arg1+");", function (err, result) {
+            if (err)
+                throw err;
+                    telegram.sendMessage(message.chat.id, "Aggiunto '" + arg2 + "' x" + arg1 + " alla lista!");
+        });
+                    } else {
+                        telegram.sendMessage(message.chat.id, "Deve essere un numero positivo, piccolo birbantello.");
+                    }
+                }
+            });
+        });
     }
 });
