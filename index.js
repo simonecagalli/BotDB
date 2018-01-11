@@ -286,19 +286,26 @@ telegram.on("text", (message) => {
 telegram.on("text", (message) => {
 
     if (message.text.toLowerCase().indexOf("/avviso") === 0) {
-        var st = message.text.substr(8);
-        st = st.replace(/'/g, "''");
-        con.query("update heroku_8eeec60b9a5a4e8.inline set messaggio='" + st + "' where colonnainutile=1", function (err, result) {
-            if (err)
-                throw err;      
+        var lol = message.text.split(" ");
+        var arg1 = lol[1];
+        if (arg1 === undefined) {
+            telegram.sendMessage(message.chat.id, "Cosa vuoi fissare?");
+        } else {
+            var st = message.text.substr(8);
+            st = st.replace(/'/g, "''");
+            con.query("update heroku_8eeec60b9a5a4e8.inline set messaggio='" + st + "' where colonnainutile=1", function (err, result) {
+                if (err)
+                    throw err;
                 telegram.sendMessage(message.chat.id, "Messaggio fissato.");
                 con.query("select messaggio from heroku_8eeec60b9a5a4e8.inline where colonnainutile=1", function (err, result2) {
-            if (err)
-                throw err;      
-            result2=JSON.stringify(result2);
-                telegram.sendMessage(message.chat.id, result2);});
+                    if (err)
+                        throw err;
+                    result2 = JSON.stringify(result2);
+                    telegram.sendMessage(message.chat.id, result2);
+                });
 
             });
+        }
     }
     ;
 });
@@ -308,9 +315,9 @@ telegram.on("inline_query", (query) => {
         if (err)
             throw err;
         var aa = JSON.stringify(result);
-        var bb=aa.substr(15);
-        var cc=bb.substring(0, bb.length - 3);
-        var dd=cc.replace(/\n/g,"/r/n")
+        var bb = aa.substr(15);
+        var cc = bb.substring(0, bb.length - 3);
+        var dd = cc.replace(/\n/g, "/r/n")
         telegram.answerInlineQuery(query.id, [
             {
 
@@ -318,7 +325,7 @@ telegram.on("inline_query", (query) => {
                 id: "testarticle",
                 title: "#cerco:...",
                 input_message_content: {
-                    message_text: "#cerco:\n"+dd
+                    message_text: "#cerco:\n" + dd
                 }
             }
         ]);
