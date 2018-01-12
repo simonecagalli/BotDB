@@ -22,29 +22,22 @@ function isNumeric(n) {
     return !isNaN(parseFloat(n)) && isFinite(n);
 }
 ;
-
-function dataBase(myq) {
-    con.query(myq, function (err, result) {
-        if (err)
-            throw err;
-        JSON.stringify(result);
-    });
-}
-;
-
 telegram.on("text", (message) => {
 
     if (message.text.toLowerCase().match("/start")) {
 
         telegram.sendMessage(message.chat.id, "Benvenuto! Per cominciare usa i comandi.");
     }
-});
-
-telegram.on("text", (message) => {
 
     if (message.text.toLowerCase().indexOf("/show") === 0) {
         var lol = message.text.split(" ");
-        var arg1 = lol[1];
+        var arg1 = null;
+        if (lol[2] === undefined) {
+            arg1 = lol[1];
+        } else {
+            arg1 = lol[1] + " " + lol[2];
+        }
+
         con.query("select if(count(*)=0 ,'non trovato','trovato') from heroku_8eeec60b9a5a4e8.oggetti where nome regexp '" + arg1 + "'", function (err, result) {
             if (err)
                 throw err;
@@ -93,10 +86,9 @@ telegram.on("text", (message) => {
             }
         });
     }
-});
+    ;
 
 
-telegram.on("text", (message) => {
     if (message.text.toLowerCase().indexOf("/sub") === 0) {
         var lol = message.text.split(" ");
         var arg1 = lol[1];
@@ -201,19 +193,12 @@ telegram.on("text", (message) => {
             });
         });
     }
-});
 
-
-
-telegram.on("text", (message) => {
 
     if (message.text.toLowerCase().indexOf("/listino") === 0) {
         telegram.sendPhoto(message.chat.id, "http://imghost.io/images/2017/11/04/a9d28557-df37-479a-a60e-5f01ae5e6b26.jpg");
     }
-});
 
-
-telegram.on("text", (message) => {
 
     if (message.text.toLowerCase().indexOf("/del") === 0) {
         var lol = message.text.split(" ");
@@ -237,11 +222,6 @@ telegram.on("text", (message) => {
 
         });
     }
-});
-
-
-
-telegram.on("text", (message) => {
 
     if (message.text.toLowerCase().indexOf("/ins") === 0) {
         var lol = message.text.split(" ");
@@ -281,9 +261,6 @@ telegram.on("text", (message) => {
             });
         });
     }
-});
-
-telegram.on("text", (message) => {
 
     if (message.text.toLowerCase().indexOf("/avviso") === 0) {
         var lol = message.text.split(" ");
@@ -293,17 +270,11 @@ telegram.on("text", (message) => {
         } else {
             var st = message.text.substr(8);
             st = st.replace(/'/g, "''");
+                    st = st.replace(/\n/g, "\n");
             con.query("update heroku_8eeec60b9a5a4e8.inline set messaggio='" + st + "' where colonnainutile=1", function (err, result) {
                 if (err)
                     throw err;
                 telegram.sendMessage(message.chat.id, "Messaggio fissato.");
-                con.query("select messaggio from heroku_8eeec60b9a5a4e8.inline where colonnainutile=1", function (err, result2) {
-                    if (err)
-                        throw err;
-                    result2 = JSON.stringify(result2);
-                    telegram.sendMessage(message.chat.id, result2);
-                });
-
             });
         }
     }
@@ -317,15 +288,15 @@ telegram.on("inline_query", (query) => {
         var aa = JSON.stringify(result);
         var bb = aa.substr(15);
         var cc = bb.substring(0, bb.length - 3);
-        var dd = cc.replace(/\n/g, "/r/n")
+        var dd = cc.replace(/\n/g, /\n/);
         telegram.answerInlineQuery(query.id, [
             {
 
                 type: "article",
                 id: "testarticle",
-                title: "#cerco:...",
+                title: "#cerco:..." + dd,
                 input_message_content: {
-                    message_text: "#cerco:\n" + dd
+                    message_text: "#cerco:" +dd
                 }
             }
         ]);
