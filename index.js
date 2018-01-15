@@ -28,7 +28,7 @@ telegram.on("text", (message) => {
 
         if (message.text.toLowerCase().match("/start")) {
 
-            telegram.sendMessage(message.chat.id, " Benvenuto! Per cominciare usa i comandi.");
+            telegram.sendMessage(message.chat.id, "Benvenuto, @"+message.from.username+"! Per cominciare usa i comandi.");
         }
 
         if (message.text.toLowerCase().indexOf("/show") === 0) {
