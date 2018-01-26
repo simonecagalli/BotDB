@@ -196,7 +196,81 @@ telegram.on("text", (message) => {
                 });
             });
         }
-        
+                
+        if (message.text.toLowerCase().indexOf("/add") === 0) {
+            var lol = message.text.split(" ");
+            var arg1 = lol[1];
+            var arg2 = lol[2];
+            con.query("select if(count(*)=0 ,'non trovato','trovato') from heroku_8eeec60b9a5a4e8.oggetti where nome regexp '" + arg2 + "'", function (err, result) {
+                if (err)
+                    throw err;
+                var aa = JSON.stringify(result);
+                var aa = aa.replace("\[{\"if(count(*)=0 ,'non trovato','trovato')\":", "");
+                con.query("select if(count(*)=0 ,'non trovato','trovato') from heroku_8eeec60b9a5a4e8.oggetti where nome regexp '" + arg1 + "'", function (err, result) {
+                    if (err)
+                        throw err;
+                    var bb = JSON.stringify(result);
+                    var bb = bb.replace("\[{\"if(count(*)=0 ,'non trovato','trovato')\":", "");
+                    if (arg1 === undefined) {
+                        telegram.sendMessage(message.chat.id, "Ma aggiungere cosa?\n/add [n] <oggetto>");
+                    } else if (isNumeric(arg1) && aa === "\"trovato\"}]") {
+                        if (arg1 > 0) {
+                            con.query("select quantita from heroku_8eeec60b9a5a4e8.oggetti where nome regexp '" + arg2 + "'", function (err, result) {
+                                if (err)
+                                    throw err;
+                                var aa = JSON.stringify(result);
+                                cc = aa.split(",");
+                                if (cc.length > 1) {
+                                    telegram.sendMessage(message.chat.id, cc.length + " risultati trovati! Sii più specifico :P");
+                                } else {
+                                    var aa = aa.substring(0, aa.length - 2);
+                                    var aa = aa.replace("[{\"quantita\":", "");
+                                    var aa = parseInt(aa);
+                                    var aa = aa + parseInt(arg1);
+                                    con.query("update heroku_8eeec60b9a5a4e8.oggetti set quantita=" + aa + " where nome regexp '" + arg2 + "'", function (err, result) {
+                                        if (err)
+                                            throw err;
+                                        telegram.sendMessage(message.chat.id, "Ora ne cerchi solo " + aa + ".");
+                                        ;
+                                    });
+                                }
+                                ;
+                            });
+                        } else {
+                            telegram.sendMessage(message.chat.id, "Deve essere un numero positivo, piccolo birbantello.");
+                        }
+                    } else if (isNumeric(arg1) && aa === "\"non trovato\"}]" || !isNumeric(arg1) && bb === "\"non trovato\"}]") {
+                        telegram.sendMessage(message.chat.id, "L'oggetto non è nella lista.");
+                    } else if (!isNumeric(arg1) && bb === "\"trovato\"}]") {
+                        con.query("select quantita from heroku_8eeec60b9a5a4e8.oggetti where nome regexp '" + arg1 + "'", function (err, result) {
+                            if (err)
+                                throw err;
+                            var aa = JSON.stringify(result);
+                            cc = aa.split(",");
+                            if (cc.length > 1) {
+                                telegram.sendMessage(message.chat.id, cc.length + " risultati trovati! Sii più specifico :P");
+                            } else {
+                                var aa = aa.substring(0, aa.length - 2);
+                                var aa = aa.replace("[{\"quantita\":", "");
+                                var aa = parseInt(aa);
+                                var aa = aa + 1;
+                                con.query("update heroku_8eeec60b9a5a4e8.oggetti set quantita=" + aa + " where nome regexp '" + arg1 + "'", function (err, result) {
+                                    if (err)
+                                        throw err;
+                                    telegram.sendMessage(message.chat.id, "Ora ne cerchi solo " + aa + ".");
+                                    ;
+                                });
+                            }
+                            ;
+                        });
+
+                    }
+                    ;
+                });
+            });
+        }
+
+
         if (message.text.toLowerCase().indexOf("/add") === 0) {
             var lol = message.text.split(" ");
             var arg1 = lol[1];
